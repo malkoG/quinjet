@@ -1,0 +1,14 @@
+# Tmuxinator configuration for Kodingwarrior's Quinjet Application
+
+name: Quinjet
+root: ~/works/
+
+windows:
+  - editor:
+      layout: main-vertical
+      panes:
+        - cd ./quinjet && vi .
+  - debugging:
+      layout: main-vertical
+      panes:
+        - cd ./quinjet && yarn dev
