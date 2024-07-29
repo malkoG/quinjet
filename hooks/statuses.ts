@@ -1,11 +1,10 @@
 import { createRestAPIClient } from "masto";
-import { ACCESS_TOKEN } from "~/constants/tokens";
 import type { Status } from "~/models/status";
 
 
 const masto = createRestAPIClient({
 	url: "https://pixelfed.social",
-	accessToken: ACCESS_TOKEN,
+	accessToken: process.env.ACCESS_TOKEN,
 })
 
 export const useStatus = async (statusId: string) => {
