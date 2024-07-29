@@ -1,6 +1,4 @@
 import { createRestAPIClient } from "masto";
-import type { Status } from "~/models/status";
-
 
 const masto = createRestAPIClient({
 	url: "https://pixelfed.social",
