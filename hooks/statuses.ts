@@ -1,10 +1,7 @@
 import { createRestAPIClient } from "masto";
-import { createPinia } from "pinia";
-
 
 export const useStatus = async (statusId: string) => {
-  const pinia = createPinia();
-  const store = useAuthenticationStore(pinia)
+  const store = useAuthenticationStore()
   const masto = createRestAPIClient({
     url: "https://pixelfed.social",
     accessToken: store.accessToken,
