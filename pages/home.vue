@@ -9,10 +9,10 @@ const masto = createRestAPIClient({
   accessToken: sessionStorage.getItem("accessToken") as string,
 });
 
-const data = await masto.v1.statuses.$select("713777587527607174");
-const result = await data.fetch() as Status;
-console.log(result);
+const statuses = await masto.v1.timelines.home.list() as Status[];
 </script>
 <template>
-  <status-post :status="result" />
+  <div v-for="status in statuses">
+    <status-post :status="status" />
+  </div>
 </template>

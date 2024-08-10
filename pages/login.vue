@@ -60,7 +60,7 @@ const authLogin = async (event: Event) => {
 
 if (!!window.__ACCOUNT_APIS__[instanceURL]) {
   console.log('Already logged in');
-  location.href = '/gallery';
+  location.href = '/home';
 }
 </script>
 
