@@ -13,7 +13,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="w-full py-12">
+  <div class="status-post w-full py-12">
     <div class="bg-gray-700">
       <AspectRatio :ratio="1">
         <div class="w-full h-full flex justify-center items-center">
@@ -36,6 +36,10 @@ const props = defineProps({
 </template>
 
 <style lang="scss">
+.status-post {
+  max-width: 468px;
+}
+
 .carousel {
   width: 100%;
   height: 100%;
