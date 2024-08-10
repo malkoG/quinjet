@@ -20,7 +20,7 @@ const props = defineProps({
     </carousel>
   </div>
   <div class="card-body">
-    <p>{{ status.content }}</p>
+    <div v-html="status.content"></div>
     <div class="card-actions justify-end">
     </div>
   </div>
