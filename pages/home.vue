@@ -12,7 +12,9 @@ const masto = createRestAPIClient({
 const statuses = await masto.v1.timelines.home.list() as Status[];
 </script>
 <template>
-  <div v-for="status in statuses">
-    <status-post :status="status" />
-  </div>
+  <QuinjetPage>
+    <div v-for="status in statuses">
+      <status-post :status="status" />
+    </div>
+  </QuinjetPage>
 </template>

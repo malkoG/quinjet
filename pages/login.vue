@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useSessionStorage } from '@vueuse/core';
+import QuinjetPage from '~/components/quinjet-page.vue';
 import { useAuthenticationStore } from '~/stores/authentication-store';
+
 
 const store = useAuthenticationStore();
 
@@ -65,8 +67,10 @@ if (!!window.__ACCOUNT_APIS__[instanceURL]) {
 </script>
 
 <template>
-  <div>
-    <button @click="tryLogin">instance login</button>
-  </div>
+  <QuinjetPage>
+    <div>
+      <button @click="tryLogin">instance login</button>
+    </div>
+  </QuinjetPage>
 
 </template>
