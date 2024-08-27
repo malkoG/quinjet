@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { createRestAPIClient } from "masto";
 
+import QuinjetContainer from "~/components/quinjet-container.vue";
 
 const attachments = defineModel('attachments', {
   type: FileList || null,
@@ -62,28 +63,24 @@ const composeWithMultipleAttachments = async (props: { files: FileList, status: 
 
 <template>
   <QuinjetPage>
-    <div class="container mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4">
-      <div id="profile" class="md:col-span-1"></div>
-      <div id="feed" class="col-span-2">
-        <div class="overflow-x-scroll w-full flex gap-x-4">
-          <template v-for="previewUrl in attachmentPreviews">
-            <img :src="previewUrl" class="h-64 w-64 object-cover" />
-          </template>
-        </div>
-        <div>
-          <label for="file" class="block text-sm font-medium text-gray-700">File</label>
-          <input type="file" name="file" @change="onUploadAttachments" multiple accept="image/*"
-            class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-        </div>
-        <div>
-          <label for="caption" class="block text-sm font-medium text-gray-700">Caption</label>
-          <textarea v-model="content" id="caption" name="caption" rows="5"
-            class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 border-2 rounded-md bg-white"></textarea>
-        </div>
-        <button type="submit" @click="submit"
-          class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Upload</button>
+    <QuinjetContainer>
+      <div class="overflow-x-scroll w-full flex gap-x-4">
+        <template v-for="previewUrl in attachmentPreviews">
+          <img :src="previewUrl" class="h-64 w-64 object-cover" />
+        </template>
       </div>
-      <div id="notifications" class="hidden lg:block lg:col-span-1"></div>
-    </div>
+      <div>
+        <label for="file" class="block text-sm font-medium text-gray-700">File</label>
+        <input type="file" name="file" @change="onUploadAttachments" multiple accept="image/*"
+          class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+      </div>
+      <div>
+        <label for="caption" class="block text-sm font-medium text-gray-700">Caption</label>
+        <textarea v-model="content" id="caption" name="caption" rows="5"
+          class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 border-2 rounded-md bg-white"></textarea>
+      </div>
+      <button type="submit" @click="submit"
+        class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Upload</button>
+    </QuinjetContainer>
   </QuinjetPage>
 </template>
