@@ -92,6 +92,9 @@ if (code) {
   sessionStorage.setItem('accessToken', accessToken);
 }
 
+if (sessionStorage.getItem('accessToken') === null) {
+  window.location.href = '/login';
+}
 
 </script>
 <template>
