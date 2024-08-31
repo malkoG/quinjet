@@ -3,6 +3,7 @@ interface StatusAttachment {
 }
 
 export interface Status {
+  id: string;
   mediaAttachments: StatusAttachment[];
   content: string;
 }
