@@ -92,7 +92,7 @@ if (code) {
   sessionStorage.setItem('accessToken', accessToken);
 }
 
-if (sessionStorage.getItem('accessToken') === null) {
+if (sessionStorage.getItem('accessToken') === null && window.location.pathname !== '/login') {
   window.location.href = '/login';
 }
 
