@@ -22,4 +22,7 @@ logs
 .env
 .env.*
 !.env.example
-.aider*
+.aider.tags.*
+.aider.input.history 
+.aider.chat.history.md
+
