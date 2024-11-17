@@ -8,7 +8,7 @@ import ProfileColumn from '~/components/profile-column.vue'
       <ProfileColumn />
     </div>
     <div id="feed" class="col-span-2">
-      <slot/>
+      <slot />
     </div>
     <div id="notifications" class="hidden lg:block lg:col-span-1"></div>
   </div>
