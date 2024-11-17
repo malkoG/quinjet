@@ -26,14 +26,17 @@ const masto = createRestAPIClient({
 
 // Handle file uploads
 const onUploadAttachments = (files: FileList | null) => {
+
+
   if (files) {
-    attachments.value = Array.from(files).map((file) => ({
+    const newAttachments = Array.from(files).map((file) => ({
       file,
       url: URL.createObjectURL(file),
       filterType: "",
       filterValue: 100,
       dialogVisible: false
     }));
+    attachments.value = [...attachments.value, ...newAttachments];
   }
 };
 
@@ -133,12 +136,12 @@ const onDragLeave = () => {
       </div>
 
       <!-- Image Previews with Filters -->
-      <div class="grid grid-cols-2 gap-4 aspect-square mt-4">
+      <div class="grid grid-cols-2 gap-4 mt-4">
         <div v-for="(preview, index) in attachments" :key="index" @click="toggleDialog(index)"
           class="relative bg-white shadow-md rounded-lg overflow-hidden flex justify-center items-center">
 
           <img :src="preview.url" :style="{ filter: `${preview.filterType}(${preview.filterValue}%)` }"
-            class="w-full h-39 object-cover" alt="Image Preview" />
+            class="w-full h-40 object-cover aspect-square" alt="Image Preview" />
           <Dialog v-model:visible="preview.dialogVisible" modal header="Edit Image" :style="{
             width: '400px'
           }">
