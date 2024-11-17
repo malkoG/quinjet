@@ -22,6 +22,7 @@
     "pinia": "^2.2.0",
     "radix-vue": "^1.9.3",
     "vue": "latest",
+    "vue-feather-icons": "^5.1.0",
     "vue3-carousel": "^0.3.3"
   },
   "overrides": {
