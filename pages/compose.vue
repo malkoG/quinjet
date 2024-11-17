@@ -5,7 +5,9 @@ import { createRestAPIClient } from "masto";
 import QuinjetContainer from "~/components/quinjet-container.vue";
 import QuinjetPage from "~/components/quinjet-page.vue";
 
-const attachments = ref<File[]>([]);
+const attachments = ref(
+  [] as { file: File; url: string; filterType: string; filterValue: number }[]
+);
 const content = ref<string>("");
 
 // DND state
@@ -13,15 +15,6 @@ const dragOver = ref(false);
 
 // Placeholder image URL
 const placeholderImage = "https://via.placeholder.com/150?text=Upload+Image";
-
-// Compute previews
-const attachmentPreviews = computed(() => {
-  return attachments.value.map((file) => ({
-    file,
-    url: URL.createObjectURL(file),
-    filter: "",
-  }));
-});
 
 // Initialize Masto client
 const masto = createRestAPIClient({
@@ -32,7 +25,12 @@ const masto = createRestAPIClient({
 // Handle file uploads
 const onUploadAttachments = (files: FileList | null) => {
   if (files) {
-    attachments.value = Array.from(files);
+    attachments.value = Array.from(files).map((file) => ({
+      file,
+      url: URL.createObjectURL(file),
+      filterType: "",
+      filterValue: 100,
+    }));
   }
 };
 
@@ -48,8 +46,40 @@ const onDrop = (event: DragEvent) => {
 const submit = async () => {
   if (attachments.value.length === 0) return;
 
+  // Convert filtered images to Blob using canvas
+  const filteredFiles = await Promise.all(
+    attachments.value.map((preview) => {
+      return new Promise<File>((resolve) => {
+        const img = new Image();
+        img.src = preview.url;
+
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
+
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.filter = `${preview.filterType}(${preview.filterValue}%)`;
+            ctx.drawImage(img, 0, 0);
+
+            canvas.toBlob((blob) => {
+              if (blob) {
+                const filteredFile = new File([blob], preview.file.name, {
+                  type: preview.file.type,
+                });
+                resolve(filteredFile);
+              }
+            }, preview.file.type);
+          }
+        };
+      });
+    })
+  );
+
+  // Upload filtered files
   const mediaAttachments = await Promise.all(
-    attachments.value.map(async (file) => {
+    filteredFiles.map(async (file) => {
       const result = await masto.v1.media.create({
         file,
       });
@@ -62,7 +92,7 @@ const submit = async () => {
     status: content.value,
   });
 
-  location.href = "/"
+  location.href = "/";
 };
 
 // Handle drag and drop effects
@@ -73,11 +103,6 @@ const onDragOver = (event: DragEvent) => {
 
 const onDragLeave = () => {
   dragOver.value = false;
-};
-
-// Update image filter
-const updateFilter = (index: number, filter: string) => {
-  attachmentPreviews.value[index].filter = filter;
 };
 </script>
 
@@ -97,21 +122,26 @@ const updateFilter = (index: number, filter: string) => {
 
       <!-- Image Previews with Filters -->
       <div class="grid grid-cols-2 gap-4 mt-4">
-        <div v-for="(preview, index) in attachmentPreviews" :key="index"
+        <div v-for="(preview, index) in attachments" :key="index"
           class="relative bg-white shadow-md rounded-lg overflow-hidden">
-          <img :src="preview.url" :style="{ filter: preview.filter }" class="w-full h-40 object-cover"
-            alt="Image Preview" />
+          <img :src="preview.url" :style="{ filter: `${preview.filterType}(${preview.filterValue}%)` }"
+            class="w-full h-40 object-cover" alt="Image Preview" />
           <div class="p-2">
             <label class="block text-sm font-medium text-gray-700">Filter</label>
             <select
               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              v-model="preview.filter" @change="updateFilter(index, preview.filter)">
+              v-model="preview.filterType">
               <option value="">None</option>
-              <option value="grayscale(100%)">Grayscale</option>
-              <option value="sepia(100%)">Sepia</option>
-              <option value="blur(2px)">Blur</option>
-              <option value="brightness(150%)">Brightness</option>
+              <option value="grayscale">Grayscale</option>
+              <option value="sepia">Sepia</option>
+              <option value="blur">Blur</option>
+              <option value="brightness">Brightness</option>
             </select>
+            <div v-if="preview.filterType !== ''" class="mt-2">
+              <label class="block text-sm font-medium text-gray-700">Intensity</label>
+              <input type="range" min="0" max="200" v-model="preview.filterValue"
+                class="w-full mt-1 focus:ring-indigo-500 focus:border-indigo-500" />
+            </div>
           </div>
         </div>
       </div>
@@ -141,3 +171,4 @@ const updateFilter = (index: number, filter: string) => {
   /* Indigo light */
 }
 </style>
+
