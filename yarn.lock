@@ -866,6 +866,14 @@
     semver "^7.3.5"
     tar "^6.1.11"
 
+"@material-tailwind/html@^2.3.2":
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/@material-tailwind/html/-/html-2.3.2.tgz#0552c6247c317d07b3b7419010601c7d490fe861"
+  integrity sha512-wtK5DaKfw0KC6M2gPmx0TO/IvVXqOz536pxcoAvV4InQ+eLP77gFiQu3btJYjkgkwBtECSDDhFSWekqAsUuG1Q==
+  dependencies:
+    deepmerge "^4.2.2"
+    material-ripple-effects "^2.0.1"
+
 "@netlify/functions@^2.8.0":
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/@netlify/functions/-/functions-2.8.0.tgz#245f4be789891159d95391c171263ded8ee1ee3a"
@@ -4229,6 +4237,11 @@ masto@^6.8.0:
     isomorphic-ws "^5.0.0"
     ts-custom-error "^3.3.1"
     ws "^8.17.0"
+
+material-ripple-effects@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/material-ripple-effects/-/material-ripple-effects-2.0.1.tgz#47803d2ab1561698d930e2524a7a9a19fb2829b7"
+  integrity sha512-hHlUkZAuXbP94lu02VgrPidbZ3hBtgXBtjlwR8APNqOIgDZMV8MCIcsclL8FmGJQHvnORyvoQgC965vPsiyXLQ==
 
 mdn-data@2.0.28:
   version "2.0.28"
