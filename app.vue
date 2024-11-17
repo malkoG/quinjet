@@ -2,6 +2,8 @@
 import { createRestAPIClient } from 'masto';
 
 import 'vue3-carousel/dist/carousel.css'
+import 'primeicons/primeicons.css'
+
 
 const code = decodeURIComponent(
   (window.location.search.match(/code=([^&]+)/) || [, ''])[1],
