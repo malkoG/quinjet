@@ -1,8 +1,10 @@
+<script lang="ts" setup>
+import NavBar from "~/components/nav-bar.vue";
+</script>
+
 <template>
   <div class="bg-white h-screen overflow-y-scroll">
-    <header class="text-center text-lg font-black py-12">
-      Placeholder for navigation
-    </header>
+    <NavBar />
     <slot />
   </div>
 </template>
