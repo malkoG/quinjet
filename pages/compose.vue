@@ -1,86 +1,143 @@
 <script setup lang="ts">
+import { ref, computed } from "vue";
 import { createRestAPIClient } from "masto";
 
 import QuinjetContainer from "~/components/quinjet-container.vue";
+import QuinjetPage from "~/components/quinjet-page.vue";
 
-const attachments = defineModel('attachments', {
-  type: FileList || null,
-  default: null,
-});
+const attachments = ref<File[]>([]);
+const content = ref<string>("");
 
+// DND state
+const dragOver = ref(false);
+
+// Placeholder image URL
+const placeholderImage = "https://via.placeholder.com/150?text=Upload+Image";
+
+// Compute previews
 const attachmentPreviews = computed(() => {
-  return Array.from(attachments.value || []).map((file) => URL.createObjectURL(file));
+  return attachments.value.map((file) => ({
+    file,
+    url: URL.createObjectURL(file),
+    filter: "",
+  }));
 });
 
-const content = defineModel("content", {
-  type: String,
-  default: "",
-});
-
+// Initialize Masto client
 const masto = createRestAPIClient({
   url: "https://pixelfed.social",
   accessToken: sessionStorage.getItem("accessToken") as string,
 });
 
-const onUploadAttachments = async (e: Event) => {
-  const files = (e.target as HTMLInputElement).files;
-  if (!files) {
-    return;
+// Handle file uploads
+const onUploadAttachments = (files: FileList | null) => {
+  if (files) {
+    attachments.value = Array.from(files);
   }
-
-  attachments.value = files;
 };
 
-const submit = async (e: Event) => {
-  const files = attachments.value || new FileList();
-  console.log({ files });
-  if (files.length === 0) {
-    return;
+// Handle DND
+const onDrop = (event: DragEvent) => {
+  event.preventDefault();
+  dragOver.value = false;
+  if (event.dataTransfer?.files) {
+    onUploadAttachments(event.dataTransfer.files);
   }
-
-  const status = content.value;
-  composeWithMultipleAttachments({ files, status });
 };
 
-const composeWithMultipleAttachments = async (props: { files: FileList, status: string }) => {
-  const mediaAttachments = await Promise.all(Array.from(props.files).map(async (file) => {
-    const result = await masto.v1.media.create({
-      file,
-    });
+const submit = async () => {
+  if (attachments.value.length === 0) return;
 
-    return result;
-  }));
+  const mediaAttachments = await Promise.all(
+    attachments.value.map(async (file) => {
+      const result = await masto.v1.media.create({
+        file,
+      });
+      return result;
+    })
+  );
 
   const status = await masto.v1.statuses.create({
     mediaIds: mediaAttachments.map((media) => media.id),
-    status: props.status,
+    status: content.value,
   });
 
-  console.log(status);
-}
+  location.href = "/"
+};
 
+// Handle drag and drop effects
+const onDragOver = (event: DragEvent) => {
+  event.preventDefault();
+  dragOver.value = true;
+};
+
+const onDragLeave = () => {
+  dragOver.value = false;
+};
+
+// Update image filter
+const updateFilter = (index: number, filter: string) => {
+  attachmentPreviews.value[index].filter = filter;
+};
 </script>
 
 <template>
   <QuinjetPage>
     <QuinjetContainer>
-      <div class="overflow-x-scroll w-full flex gap-x-4">
-        <template v-for="previewUrl in attachmentPreviews">
-          <img :src="previewUrl" class="h-64 w-64 object-cover" />
-        </template>
+      <!-- Drag-and-Drop Area -->
+      <div class="p-4 border-2 border-dashed rounded-lg"
+        :class="dragOver ? 'border-indigo-500 bg-indigo-50' : 'border-gray-300'" @dragover="onDragOver"
+        @dragleave="onDragLeave" @drop="onDrop">
+        <div class="w-full h-64 flex items-center justify-center cursor-pointer" @click="$refs.fileInput.click()">
+          <img :src="placeholderImage" alt="Upload Placeholder" class="w-32 h-32 object-cover" />
+        </div>
+        <input type="file" ref="fileInput" class="hidden" @change="(e) => onUploadAttachments(e.target.files)" multiple
+          accept="image/*" />
       </div>
-      <div>
-        <label for="file" class="block text-sm font-medium text-gray-700">File</label>
-        <input type="file" name="file" @change="onUploadAttachments" multiple accept="image/*"
-          class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+
+      <!-- Image Previews with Filters -->
+      <div class="grid grid-cols-2 gap-4 mt-4">
+        <div v-for="(preview, index) in attachmentPreviews" :key="index"
+          class="relative bg-white shadow-md rounded-lg overflow-hidden">
+          <img :src="preview.url" :style="{ filter: preview.filter }" class="w-full h-40 object-cover"
+            alt="Image Preview" />
+          <div class="p-2">
+            <label class="block text-sm font-medium text-gray-700">Filter</label>
+            <select
+              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              v-model="preview.filter" @change="updateFilter(index, preview.filter)">
+              <option value="">None</option>
+              <option value="grayscale(100%)">Grayscale</option>
+              <option value="sepia(100%)">Sepia</option>
+              <option value="blur(2px)">Blur</option>
+              <option value="brightness(150%)">Brightness</option>
+            </select>
+          </div>
+        </div>
       </div>
-      <div>
+
+      <!-- Caption Input -->
+      <div class="mt-4">
         <label for="caption" class="block text-sm font-medium text-gray-700">Caption</label>
-        <textarea v-model="content" id="caption" name="caption" rows="5"
-          class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 border-2 rounded-md bg-white"></textarea>
+        <textarea v-model="content" id="caption" rows="4"
+          class="mt-1 block w-full shadow-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+          placeholder="Write a caption..."></textarea>
       </div>
-      <button type="submit" @click="submit"
-        class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Upload</button>
+
+      <!-- Upload Button -->
+      <button class="mt-4 w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded hover:bg-indigo-700"
+        @click="submit">
+        Upload
+      </button>
     </QuinjetContainer>
   </QuinjetPage>
 </template>
+
+<style scoped>
+.drag-over {
+  border-color: #4f46e5;
+  /* Indigo */
+  background-color: #eef2ff;
+  /* Indigo light */
+}
+</style>
