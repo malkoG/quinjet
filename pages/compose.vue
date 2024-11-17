@@ -120,7 +120,7 @@ const onDragLeave = () => {
 
 <template>
   <QuinjetPage>
-    <QuinjetContainer>
+    <QuinjetContainer hideNotifications hideComposeButton>
       <!-- Drag-and-Drop Area -->
       <div class="p-4 border-2 border-dashed rounded-lg"
         :class="dragOver ? 'border-indigo-500 bg-indigo-50' : 'border-gray-300'" @dragover="onDragOver"
