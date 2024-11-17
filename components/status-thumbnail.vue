@@ -13,10 +13,10 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="bg-gray-700">
+  <div class="bg-gray-700 rounded-md">
     <AspectRatio :ratio="1">
-      <div class="w-full h-full flex justify-center items-center object-contain">
-        <div class="bg-base-100 w-full h-full flex justify-center items-center rounded-sm">
+      <div class="w-full h-full flex justify-center items-center object-contain rounded-sm">
+        <div class="bg-base-100 w-full h-full flex justify-center items-center rounded-md">
           <img :src="status.mediaAttachments[0].url" alt="status thumbnail" class="object-contain h-full" />
         </div>
       </div>
