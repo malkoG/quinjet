@@ -33,10 +33,10 @@ const handleComposeClick = () => {
     </template>
   </div>
 
-  <div class="fixed w-full h-screen left-0 top-0 z-10">
+  <div class="fixed w-full h-screen left-0 top-0 z-10 pointer-events-none">
     <div class="container mx-auto h-full relative">
       <button v-if="!hideComposeButton"
-        class="absolute bottom-4 right-4 w-14 h-14 rounded-full bg-indigo-100 text-white flex items-center justify-center shadow-lg hover:bg-indigo-600"
+        class="absolute bottom-4 right-4 w-14 h-14 rounded-full bg-indigo-100 text-white flex items-center justify-center shadow-lg hover:bg-indigo-600 pointer-events-auto"
         @click="handleComposeClick">
         <i class="pi pi-camera text-white text-2xl"></i>
       </button>

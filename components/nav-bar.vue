@@ -68,7 +68,7 @@ onUnmounted(() => {
       </span>
 
       <div>
-        <a @click="toggleMenu" class="relative focus:outline-none text-4xl">
+        <a @click="toggleMenu" class="relative focus:outline-none text-4xl cursor-pointer">
           🤔
         </a>
         <div v-if="menuVisible"
