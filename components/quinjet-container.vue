@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ProfileColumn from '~/components/profile-column.vue'
+import NotificationColumn from './notification-column.vue';
 </script>
 
 <template>
@@ -10,6 +11,8 @@ import ProfileColumn from '~/components/profile-column.vue'
     <div id="feed" class="col-span-2">
       <slot />
     </div>
-    <div id="notifications" class="hidden lg:block lg:col-span-1"></div>
+    <div id="notifications" class="hidden lg:block lg:col-span-1">
+      <NotificationColumn />
+    </div>
   </div>
 </template>
